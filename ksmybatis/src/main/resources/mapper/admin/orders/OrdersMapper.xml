@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="ksmybatis.admin.orders.mapper.OrdersMapper">
+  	<!-- 여기의 주석은 이거지만, 아래는 sql 주석(/**/) 써야한다. -->
+  	
+  	<delete id="removeOrdersById" parameterType="String">
+		/*구매자 주문이력 삭제*/
+		delete
+		from 
+			ORDERS
+		where 
+			cust_id=#{customerId};
+  	</delete>
+  	
+  	<delete id="removeOrderItemsByNum" parameterType="list">
+  		/* 구매번호로 구매상세 삭제 */
+		DELETE
+		from 
+			orderitems
+		where 
+			order_no in
+			<foreach collection="list" item="orderNum" open="(" close=")" separator=",">
+				#{orderNum}
+			</foreach>
+  	</delete>
+  	
+  	<select id="getOrdersNumById" parameterType="String" resultType="integer">
+  		/* 구매자 구매번호 조회 */
+		select
+			order_no
+		from 
+			orders 
+		where
+			cust_id=#{customerId};
+  	</select>
+  	
+  	
+  	<delete id="removeOrderItemsBySellerId" parameterType="String">
+  		/* 판매자가 등록한 상품을 구매한 이력 삭제 */
+  		delete 
+			o2
+		from
+			vendors v inner join products p 
+			on v.vend_cd =p.vend_cd
+			inner join orderitems o2
+			on p.prod_cd = o2.order_prod_cd
+		where 
+			v.vend_mbr_id =#{sellerId};
+  	</delete>
+  </mapper>
